@@ -1,7 +1,16 @@
-use script_herder_core::config::AppConfig;
+use script_herder_core::config::{AppConfig, KnownConfigs};
 
 pub fn run_config(mut config: AppConfig, key: String, value: Option<String>, list_known: bool) {
     if list_known {
+        println!("Known config keys:");
+        for key in KnownConfigs::list() {
+            println!(" - {}", key);
+        }
+        return;
+    }
+
+    if key.is_empty() {
+        println!("No key provided");
         return;
     }
 

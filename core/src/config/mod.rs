@@ -10,6 +10,7 @@ use log::debug;
 
 use crate::config::config_json::ConfigJson;
 use crate::config::config_env::ConfigEnv;
+use crate::enum_str;
 use crate::infra::error::CoreError;
 
 pub enum Config {
@@ -127,7 +128,7 @@ impl AppConfig {
     }
 
     fn create_repo_config(machine_config: &ConfigJson) -> Result<Config, CoreError> {
-        let repo_path: Option<PathBuf> = match machine_config.get::<String>("core.root.path") {
+        let repo_path: Option<PathBuf> = match machine_config.get::<String>(KnownConfigs::RepoPath.to_str()) {
             Some(path) => Some(PathBuf::from(path)),
             None => None,
         };
@@ -191,4 +192,26 @@ impl AppConfig {
         }
         Ok(())
     }
+
+    pub fn get<T>(&self, key: KnownConfigs) -> Option<T> 
+        where T: std::str::FromStr + serde::de::DeserializeOwned {
+        self.provider.get(key.to_str())
+    }
+
+    pub fn get_value(&self, key: KnownConfigs) -> Option<Value> {
+        self.provider.get_value(key.to_str())
+    }
+
+    pub fn set<T>(&mut self, key: KnownConfigs, value: T)
+    where T: serde::Serialize {
+        self.provider.set(key.to_str(), value)
+    }
+
+    pub fn set_value(&mut self, key: KnownConfigs, value: Value) {
+        self.provider.set_value(key.to_str(), value)
+    }
 }
+
+enum_str!(KnownConfigs {
+    RepoPath = "core.repo.path",
+});
