@@ -8,4 +8,7 @@ edition = "2021"
 [dependencies]
 clap = { version = "4.3.19", features = ["derive", "env"] }
 dirs = "5.0.1"
+fern = { version = "0.6.2", features = ["colored"] }
+humantime = "2.1.0"
+log = "0.4.19"
 script_herder_core ={ path = "../core" }

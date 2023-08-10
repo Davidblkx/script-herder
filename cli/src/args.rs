@@ -9,6 +9,9 @@ pub struct Cli {
     #[arg(short, long, value_name = "FILE")]
     pub config: Option<PathBuf>,
 
+    #[arg(short = 't', long = "verbose", help = "Verbose output")]
+    pub verbose: bool,
+
     #[command(subcommand)]
     pub command: Option<Commands>,
 }
@@ -24,4 +27,6 @@ pub enum Commands {
         #[arg(short, long, help = "List known config keys")]
         list: bool,
     },
+    /// Get info about repository
+    Repo,
 }
