@@ -12,6 +12,7 @@ use crate::config::config_json::ConfigJson;
 use crate::config::config_env::ConfigEnv;
 use crate::enum_str;
 use crate::infra::error::CoreError;
+use crate::git::repo::Repo;
 
 pub enum Config {
     Json(ConfigJson),
@@ -239,6 +240,15 @@ impl AppConfig {
     pub fn get_repo_path(&self) -> Option<PathBuf> {
         let path = self.get::<String>(KnownConfigs::RepoPath);
         AppConfig::internal_get_repo_path(path, &self.root)
+    }
+
+    pub fn get_repo(&self) -> Result<Repo, CoreError> {
+        let repo_path = match self.get_repo_path() {
+            Some(e) => e,
+            None => return Err(CoreError::for_app("Invalid path".to_string())),
+        };
+
+        Repo::from_path(repo_path)
     }
 }
 

@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 use git2;
 
-use crate::git::repo_info::RepoInfo;
+use crate::{git::repo_info::RepoInfo, infra::error::CoreError};
 
 pub struct Repo {
     pub path: PathBuf,
@@ -18,10 +18,12 @@ impl Repo {
         }
     }
     
-    pub fn from_path(path: PathBuf) -> Result<Self, git2::Error> {
+    pub fn from_path(path: PathBuf) -> Result<Self, CoreError> {
         let mut repo = Repo::new(path);
-        repo.open()?;
-        Ok(repo)
+        match repo.open() {
+            Ok(_) => Ok(repo),
+            Err(e) => Err(CoreError::for_app(e.message().to_string()))
+        }
     }
 
     pub fn open(&mut self) -> Result<(), git2::Error> {

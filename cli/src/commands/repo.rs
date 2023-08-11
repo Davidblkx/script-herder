@@ -1,20 +1,10 @@
-use std::path::PathBuf;
-
-use script_herder_core::{config::AppConfig, git::repo::Repo};
+use script_herder_core::config::AppConfig;
 
 pub fn run_repo_info(config: AppConfig) {
-    let repo_path = match config.get_repo_path() {
-        Some(e) => e,
-        None => {
-            print!("Repository not found");
-            return;
-        }
-    };
-
-    let repo = match Repo::from_path(PathBuf::from(repo_path)) {
+    let repo = match config.get_repo() {
         Ok(repo) => repo,
         Err(e) => {
-            println!("Error opening repo: {}", e);
+            println!("Error getting repo: {}", e);
             return;
         }
     };

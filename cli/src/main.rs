@@ -17,8 +17,7 @@ fn main() {
         None => get_config_path()
     };
 
-    let mut verbose = cli.verbose;
-    if !verbose { verbose = true; }
+    let verbose = cli.verbose;
 
     if verbose {
         configure_logger(log::LevelFilter::Trace).unwrap();
