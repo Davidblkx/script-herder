@@ -39,6 +39,6 @@ fn load_level(config: &AppConfig) -> log::LevelFilter {
             "off" => log::LevelFilter::Off,
             _ => log::LevelFilter::Error,
         },
-        None => log::LevelFilter::Off,
+        None => log::LevelFilter::Error,
     }
 }

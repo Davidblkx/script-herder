@@ -31,8 +31,11 @@ impl Repo {
         Ok(())
     }
 
-    pub fn get_repo(&self) -> Option<&git2::Repository> {
-        self.repo.as_ref()
+    pub fn get_repo(&self) -> Result<&git2::Repository, CoreError> {
+        match &self.repo {
+            Some(e) => Ok(e),
+            None => Err(CoreError::for_app("Repository not open".to_string()))
+        }
     }
 
     pub fn get_remote_url(&self) -> Result<String, git2::Error> {
@@ -66,5 +69,12 @@ impl Repo {
             user,
             email,
         })
+    }
+
+    pub fn fetch(&self, refs: &str) -> Result<(), CoreError> {
+        let repo = self.get_repo()?;
+        let mut remote = repo.find_remote(&self.remote)?;
+
+        Ok(remote.fetch(&[refs], None, None)?)
     }
 }

@@ -3,6 +3,7 @@ use std::{fmt, io};
 #[derive(Debug)]
 pub enum ErrorSource {
     IO(std::io::ErrorKind),
+    GIT(git2::ErrorClass, git2::ErrorCode),
     Other,
     App,
 }
@@ -13,6 +14,7 @@ impl fmt::Display for ErrorSource {
             ErrorSource::IO(kind) => write!(f, "IO|{:?}", kind),
             ErrorSource::Other => write!(f, "Unknown"),
             ErrorSource::App => write!(f, "App"),
+            ErrorSource::GIT(cls, code) => write!(f, "GIT|{:?}:{:?}", cls, code)
         }
     }
 }
@@ -63,6 +65,16 @@ impl From<io::Error> for CoreError {
             source: ErrorSource::IO(error.kind()),
             message: error.to_string(),
             context: None,
+        }
+    }
+}
+
+impl From<git2::Error> for CoreError {
+    fn from(error: git2::Error) -> Self {
+        CoreError {
+            source: ErrorSource::GIT(error.class(), error.code()),
+            message: error.message().to_string(),
+            context: None
         }
     }
 }
